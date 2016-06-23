@@ -1,21 +1,28 @@
-# Vuls checker with the coverage of Deep Security
+# Vuls simulator for Deep Security
 
-Find out high urgency vulnerability that [Vuls](https://github.com/future-architect/vuls) found with Deep Security.
+Simulate Deep Security's coverage for high urgency vulnerability reported by [Vuls](https://github.com/future-architect/vuls).
+
 (This tool is the fork from [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector).)
 
 ----
 
+
 ## Description
-```vulschecker_ds``` is a CLI tool that compares the vulenarebility report from Vuls with The CVE list Deep Security has.
-It can help you to find out high urgency vulnerability.
+```vulssimulator_ds``` is a CLI tool that simulates the toughness against the vulenarebility reported by [Vuls](https://github.com/future-architect/vuls).
+
+It can help you to see the toughness of Deep Security, and find out vulnerability be required another measures.
+
 This tool use [DeepSecurity SDK](https://github.com/deep-security/deep-security-py) and refer to [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector).
 
+
 ##Features
-* Output vulnerability that Deep Security can't take measures.
-    * To use report by Vuls, we found high urgency vulnerability specific server has.
-* Two types of output style are available.
-    1. Summary list : Output the number of vulnerability.
-    2. CVE list : Output CVE list that Deep Security doesn't take measures.
+* Output vulnerability that Deep Security can take measures, and cannote take measures.
+    * To use report by Vuls, we can simulate against necessary and sufficient vulnerability.
+* Three types of output style are available.
+    1. Summary list : Output the number of the server's vulnerability, coverage and uncoverage by Deep Security, and so.
+    2. Coverage CVE list : Output CVE list that Deep Security can take measures.
+    3. Uncoverage CVE list : Output CVE list that Deep Security cannnot take measures.
+
 
 ##Requirement
 * Python3 or more
@@ -26,21 +33,22 @@ This tool use [DeepSecurity SDK](https://github.com/deep-security/deep-security-
 
 ## Index
 - [Usage](#usage)
-    - [Compare](#usage-compare)
+    - [simulate](#usage-simulate)
 - [SSL Certificate Validation](#ssl-certificate-validation)
+
 
 ## Usage
 The syntax for basic command line usage is available by using the ```--help``` switch.
 
 ```bash
-$ python vulschecker_ds.py help
-usage: python vulschecker_ds.py [COMMAND]
-   For more help on a specific command, type "python vulschecker_ds.py [COMMAND] --help"
+$ python vulssimulator_ds.py help
+usage: python vulssimulator_ds.py [COMMAND]
+   For more help on a specific command, type "python vulssimulator_ds.py [COMMAND] --help"
 
    Available commands:
 
-   compare
-      > Compare the vulenarebility report from Vuls with The CVE list Deep Security has
+   simulate
+      > Compare the vulenarebility reported by Vuls with The CVE list Deep Security has, and output the result.
 
 ```
 
@@ -77,10 +85,10 @@ These core settings allow you to connect to a Deep Security manager or Deep Secu
 
 ```bash
 # to connect to your own Deep Security manager
-vulschecker_ds.py [COMMAND] -d 10.1.1.0 -u admin -p USE_RBAC_TO_REDUCE_RISK --ignore-ssl-validation
+vulssimulator_ds.py [COMMAND] -d 10.1.1.0 -u admin -p USE_RBAC_TO_REDUCE_RISK --ignore-ssl-validation
 
 # to connect to Deep Security as a Service
-vulschecker_ds.py [COMMAND] -u admin -p USE_RBAC_TO_REDUCE_RISK -t MY_ACCOUNT
+vulssimulator_ds.py [COMMAND] -u admin -p USE_RBAC_TO_REDUCE_RISK -t MY_ACCOUNT
 ```
 
 Each individual command will also have it's own options that allow you to control the behaviour of the command.
@@ -89,20 +97,22 @@ You'll notice in the examples, the password is set to USE_RBAC_TO_REDUCE_RISK. I
 
 Currently Deep Security treats API access just like a user logging in. Therefore it is strongly recommended that you create a new Deep Security user for use with this script. This user should have the bare minimum permissions required to complete the tasks.
 
-<a name="usage-compare" />
 
-### compare
+<a name="usage-simulate" />
 
-The compare command gets the vulnerability that Vuls found and the list of CVE's that Deep Securty can mitigate.
+### simulate
+
+The simulate command gets the vulnerability repoted by Vuls and the list of CVE's that Deep Securty can mitigate.
 After that, this tool compares vulnerability with CVE's.
+
 (Deep Security focuses on the mitigate of *remotely exploitable* vulnerability using it's intrusion prevention engine.)
 
 ```
 # Output result of comparison the vulnerability with Deep Security as a Service
-python vulschecker_ds.py compare -u USER -p PASSWORD -t TENANT -v /tmp/vuls/results/current/IP.json
+python vulssimulator_ds.py compare -u USER -p PASSWORD -t TENANT -v /tmp/vuls/results/current/0-0-0-0.json
 
 # ...for another Deep Security manager
-python vulschecker_ds.py compare -u USER -p PASSWORD -d DSM_HOSTNAME -v /tmp/vuls/results/current/IP.json --ignore-ssl-validation
+python vulssimulator_ds.py compare -u USER -p PASSWORD -d DSM_HOSTNAME -v /tmp/vuls/results/current/0-0-0-0.json --ignore-ssl-validation
 ```
 
 This will generate output along the lines of;
@@ -118,7 +128,7 @@ Deep Security's intrusion prevention rule set currently looks for 5332 CVEs.
 
 ```
 
-You can also use the ```--print-cve-only``` switch to generate a list of CVEs that remains as vulnerability under the coverage of Deep Security. That generates output along the lines of;
+You can also use the ```--print-coverage-cve``` switch to generate a list of CVEs that Deep Security can take measures, and the ```--print-uncoverage-cve``` switch to generate a list of CVEs that Deep Security cannot take measures. Those generate output along the lines of;
 
 ```
 CVE-2015-1819
@@ -174,7 +184,7 @@ These are expected warnings. Can you tell that we (and the python core teams) ar
 ## References / Related Projects
 * [Vuls](https://github.com/future-architect/vuls)
 * [DeepSecurity SDK](https://github.com/deep-security/deep-security-py)
-* [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector).
+* [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector)
 
 ----
 
@@ -182,8 +192,8 @@ These are expected warnings. Can you tell that we (and the python core teams) ar
 [kn0630](https://github.com/kn0630)
 
 ## Change log
-Please see [CHANGELOG](https://github.com/kn0630/vulschecker_ds/CHANGELOG.md)
+Please see [CHANGELOG](https://github.com/kn0630/vulssimulator_ds/CHANGELOG.md)
 
 ## Licence
-Please see [LICENSE](https://github.com/kn0630/vulschecker_ds/LICENSE)
+Please see [LICENSE](https://github.com/kn0630/vulssimulator_ds/LICENSE)
 
