@@ -1,4 +1,4 @@
-# vulschecker_ds
+# Vuls checker with the coverage of Deep Security
 
 Find out high urgency vulnerability that [Vuls](https://github.com/future-architect/vuls) found with Deep Security.
 (This tool is the fork from [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector).)
