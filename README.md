@@ -8,20 +8,20 @@ Simulate Deep Security's coverage for high urgency vulnerability reported by [Vu
 
 
 ## Description
-```vulssimulator_ds``` is a CLI tool that simulates the toughness against the vulenarebility reported by [Vuls](https://github.com/future-architect/vuls).
+```vulssimulator_ds``` is a CLI tool that simulates Deep Security's coverage for the vulenarebility reported by [Vuls](https://github.com/future-architect/vuls).
 
-It can help you to see the toughness of Deep Security, and find out vulnerability be required another measures.
+It can help you to see the toughness of Deep Security, and find out vulnerability be required another countermeasures.
 
 This tool use [DeepSecurity SDK](https://github.com/deep-security/deep-security-py) and refer to [Amazon Inspector with DeepSecurity](https://github.com/deep-security/amazon-inspector).
 
 
 ##Features
-* Output vulnerability that Deep Security can take measures, and cannote take measures.
-    * To use report by Vuls, we can simulate against necessary and sufficient vulnerability.
+* Output vulnerability that Deep Security can and cannot cover.
+    * To use report by Vuls, we can simulate for necessary and sufficient vulnerability.
 * Three types of output style are available.
     1. Summary list : Output the number of the server's vulnerability, coverage and uncoverage by Deep Security, and so.
-    2. Coverage CVE list : Output CVE list that Deep Security can take measures.
-    3. Uncoverage CVE list : Output CVE list that Deep Security cannnot take measures.
+    2. Coverage CVE list : Output CVE list that Deep Security can cover.
+    3. Uncoverage CVE list : Output CVE list that Deep Security cannnot cover.
 
 
 ##Requirement
@@ -72,7 +72,9 @@ Each script in this set works under a common structure. There are several shared
   -t [DSM_TENANT], --dsm-tenant [DSM_TENANT]
          - The name of the Deep Security tenant/account
   -v [VULS_JSON_REPORT_PATH], --vuls-json-report [VULS_JSON_REPORT_PATH]
-         - The full-path to JSON-format report of Vulse.
+         - The full-path of JSON format report by Vuls
+  -o OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+         - The full-path of directory to output results. Defaults to current directory.
   --ignore-ssl-validation
          - Ignore SSL certification validation.
            Be careful when you use this as it disables a recommended security check.
@@ -102,17 +104,17 @@ Currently Deep Security treats API access just like a user logging in. Therefore
 
 ### simulate
 
-The simulate command gets the vulnerability repoted by Vuls and the list of CVE's that Deep Securty can mitigate.
-After that, this tool compares vulnerability with CVE's.
+The simulate command gets the vulnerability repoted by Vuls and the list of CVEs that Deep Securty can mitigate.
+After that, this tool compares vulnerability with Deep Security's coverage.
 
 (Deep Security focuses on the mitigate of *remotely exploitable* vulnerability using it's intrusion prevention engine.)
 
 ```
 # Output result of comparison the vulnerability with Deep Security as a Service
-python vulssimulator_ds.py compare -u USER -p PASSWORD -t TENANT -v /tmp/vuls/results/current/0-0-0-0.json
+python vulssimulator_ds.py simulate -u USER -p PASSWORD -t TENANT -v /tmp/vuls/results/current/0-0-0-0.json -o /tmp
 
 # ...for another Deep Security manager
-python vulssimulator_ds.py compare -u USER -p PASSWORD -d DSM_HOSTNAME -v /tmp/vuls/results/current/0-0-0-0.json --ignore-ssl-validation
+python vulssimulator_ds.py compare -u USER -p PASSWORD -d DSM_HOSTNAME -v /tmp/vuls/results/current/0-0-0-0.json -o /tmp --ignore-ssl-validation
 ```
 
 This will generate output along the lines of;
@@ -121,27 +123,32 @@ This will generate output along the lines of;
 ***********************************************************************
 * Coverage Summary
 ***********************************************************************
-Vulnerability found by Vuls are 95 CVEs.
-Deep Security's intrusion prevention rule set currently looks for 5332 CVEs.
+Vulnerability found by Vuls are 95 CVEs
+Deep Security's intrusion prevention rule set currently looks for 5332 CVEs
 
-89 (93.68%) of the CVEs that Vuls found remain as vulnerability under the coverage of Deep Security.
+6 (6.32%) of the CVEs that Vuls found are covered with Deep Security
+Severity Summary --> High : 1 CVEs, Medium : 0 CVEs, Low : 5 CVEs
 
+89 (93.68%) of the CVEs that Vuls are uncovered with Deep Security, and remain as vulnerability
+Severity Summary --> High : 20 CVEs, Medium : 0 CVEs, Low : 69 CVEs
 ```
 
-You can also use the ```--print-coverage-cve``` switch to generate a list of CVEs that Deep Security can take measures, and the ```--print-uncoverage-cve``` switch to generate a list of CVEs that Deep Security cannot take measures. Those generate output along the lines of;
+When we use this tool, not only summary but also detail are output to the assigned Directroy.
+So we can also see which CVEs are covered by Deep Security, and are uncovered.
+Those generate output along the lines of;
 
 ```
-CVE-2015-1819
-CVE-2015-2328
-CVE-2015-3195
-CVE-2015-3196
-CVE-2015-3223
+CveId,Severity
+CVE-2016-0705,High
+CVE-2016-0749,High
+CVE-2016-0799,High
+CVE-2016-2108,High
 ...
-CVE-2016-2150
-CVE-2016-3115
-CVE-2016-3191
-CVE-2016-3698
-CVE-2016-3710
+CVE-2015-7872,Low
+CVE-2015-8629,Low
+CVE-2016-0702,Low
+CVE-2015-4792,Low
+CVE-2016-0609,Low
 ```
 
 <a name="ssl-certificate-validation" />
@@ -190,9 +197,6 @@ These are expected warnings. Can you tell that we (and the python core teams) ar
 
 ## Author
 [kn0630](https://github.com/kn0630)
-
-## Change log
-Please see [CHANGELOG](https://github.com/kn0630/vulssimulator_ds/CHANGELOG.md)
 
 ## Licence
 Please see [LICENSE](https://github.com/kn0630/vulssimulator_ds/LICENSE)
